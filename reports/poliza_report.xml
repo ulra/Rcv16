@@ -120,7 +120,7 @@
                                             <td><strong>Frecuencia de Pago:</strong></td>
                                             <td><span t-field="poliza.recibo_frecuencia_pago"/></td>
                                             <td><strong>Total a Pagar:</strong></td>
-                                            <td colspan="3"><strong><span t-field="poliza.total_pagar" t-options="{'widget': 'monetary', 'display_currency': poliza.moneda}"/></strong></td>
+                                            <td colspan="3"><strong><span t-field="poliza.total_pagar" t-options="{'widget': 'monetary', 'currency_field': 'moneda'}"/></strong></td>
                                         </tr>
                                     </table>
                                 </div>
@@ -191,21 +191,21 @@
                                         </tr>
                                         <tr>
                                             <td><strong>Exceso Límite:</strong></td>
-                                            <td><span t-field="poliza.exceso_limite" t-options="{'widget': 'monetary'}"/></td>
+                                            <td><span t-field="poliza.exceso_limite" t-options="{'widget': 'monetary', 'currency_field': 'moneda'}"/></td>
                                             <td><strong>Muerte e Invalidez:</strong></td>
-                                            <td><span t-field="poliza.muerte_invalidez" t-options="{'widget': 'monetary'}"/></td>
+                                            <td><span t-field="poliza.muerte_invalidez" t-options="{'widget': 'monetary', 'currency_field': 'moneda'}"/></td>
                                         </tr>
                                         <tr>
                                             <td><strong>Daños a Cosas:</strong></td>
-                                            <td><span t-field="poliza.danos_cosas" t-options="{'widget': 'monetary'}"/></td>
+                                            <td><span t-field="poliza.danos_cosas" t-options="{'widget': 'monetary', 'currency_field': 'moneda'}"/></td>
                                             <td><strong>Defensa Penal:</strong></td>
-                                            <td><span t-field="poliza.defensa_penal" t-options="{'widget': 'monetary'}"/></td>
+                                            <td><span t-field="poliza.defensa_penal" t-options="{'widget': 'monetary', 'currency_field': 'moneda'}"/></td>
                                         </tr>
                                         <tr>
                                             <td><strong>Gastos Médicos:</strong></td>
-                                            <td><span t-field="poliza.gastos_medicos" t-options="{'widget': 'monetary'}"/></td>
+                                            <td><span t-field="poliza.gastos_medicos" t-options="{'widget': 'monetary', 'currency_field': 'moneda'}"/></td>
                                             <td><strong>Gastos Funerarios:</strong></td>
-                                            <td><span t-field="poliza.gastos_funerarios" t-options="{'widget': 'monetary'}"/></td>
+                                            <td><span t-field="poliza.gastos_funerarios" t-options="{'widget': 'monetary', 'currency_field': 'moneda'}"/></td>
                                         </tr>
                                     </table>
                                 </div>

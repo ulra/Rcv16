@@ -91,10 +91,12 @@ class PolizaSeguro(models.Model):
     
     codigo_intermediarios = fields.Char(string='Código de Intermediarios')
     participacion = fields.Float(string='Participación (%)', digits=(5, 2))
-    moneda = fields.Selection([
-        ('VES', 'Bolívares'),
-        ('USD', 'Dólares')
-    ], string='Moneda', required=True, default='VES')
+    moneda = fields.Many2one(
+        'res.currency',
+        string='Moneda',
+        required=True,
+        default=lambda self: self.env.company.currency_id
+    )
 
     # DATOS DEL RECIBO
     recibo_vigencia_desde = fields.Datetime(string='Recibo Vigencia Desde')

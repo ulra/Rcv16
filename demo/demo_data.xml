@@ -106,7 +106,7 @@
             <field name="frecuencia_pago">anual</field>
             <field name="codigo_intermediarios">INT-001</field>
             <field name="participacion">100.00</field>
-            <field name="moneda">VES</field>
+            <field name="moneda" ref="base.VES"/>
             <field name="recibo_vigencia_desde" eval="(DateTime.now() - timedelta(days=30))"/>
             <field name="recibo_vigencia_hasta" eval="(DateTime.now() + timedelta(days=335))"/>
             <field name="recibo_hora">12:00</field>
@@ -141,7 +141,7 @@
             <field name="frecuencia_pago">mensual</field>
             <field name="codigo_intermediarios">INT-002</field>
             <field name="participacion">100.00</field>
-            <field name="moneda">VES</field>
+            <field name="moneda" ref="base.VES"/>
             <field name="recibo_vigencia_desde" eval="(DateTime.now() - timedelta(days=60))"/>
             <field name="recibo_vigencia_hasta" eval="(DateTime.now() + timedelta(days=305))"/>
             <field name="recibo_hora">12:00</field>
@@ -176,7 +176,7 @@
             <field name="frecuencia_pago">trimestral</field>
             <field name="codigo_intermediarios">INT-003</field>
             <field name="participacion">100.00</field>
-            <field name="moneda">USD</field>
+            <field name="moneda" ref="base.USD"/>
             <field name="recibo_vigencia_desde" eval="(DateTime.now() - timedelta(days=10))"/>
             <field name="recibo_vigencia_hasta" eval="(DateTime.now() + timedelta(days=355))"/>
             <field name="recibo_hora">12:00</field>

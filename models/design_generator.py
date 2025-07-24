@@ -311,8 +311,8 @@ class DesignGenerator(models.Model):
                         <!-- Coberturas -->
                         <div style="margin-top: 2mm; font-size: 6pt;">
                             <strong>COBERTURAS:</strong>
-                            <span>Muerte e Invalidez: </span><span t-field="poliza.muerte_invalidez" t-options="{'widget': 'monetary'}"/> |
-                            <span>Daños a Cosas: </span><span t-field="poliza.danos_cosas" t-options="{'widget': 'monetary'}"/>
+                            <span>Muerte e Invalidez: </span><span t-field="poliza.muerte_invalidez" t-options="{'widget': 'monetary', 'currency_field': 'moneda'}"/> |
+                            <span>Daños a Cosas: </span><span t-field="poliza.danos_cosas" t-options="{'widget': 'monetary', 'currency_field': 'moneda'}"/>
                         </div>
                         
                         <!-- Pie de página -->
