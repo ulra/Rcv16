@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-        <!-- Permisos para el modelo Design Generator -->
+        <!-- Grupo específico para usuarios del Generador de Diseños -->
+        <record id="group_design_generator_user" model="res.groups">
+            <field name="name">Generador de Diseños - Usuario</field>
+            <field name="category_id" ref="base.module_category_administration"/>
+            <field name="comment">Permite a los usuarios acceder al Generador de Diseños desde PDF para personalizar templates de pólizas y carnets.</field>
+        </record>
+
+        <!-- Permisos para el modelo Design Generator - Administradores -->
         <record id="access_poliza_design_generator_admin" model="ir.model.access">
             <field name="name">poliza.design.generator.admin</field>
             <field name="model_id" ref="model_poliza_design_generator"/>
@@ -12,11 +19,33 @@
             <field name="perm_unlink">1</field>
         </record>
 
-        <!-- Permisos para el wizard Design Generator -->
+        <!-- Permisos para el modelo Design Generator - Usuarios del Generador -->
+        <record id="access_poliza_design_generator_user" model="ir.model.access">
+            <field name="name">poliza.design.generator.user</field>
+            <field name="model_id" ref="model_poliza_design_generator"/>
+            <field name="group_id" ref="group_design_generator_user"/>
+            <field name="perm_read">1</field>
+            <field name="perm_write">1</field>
+            <field name="perm_create">1</field>
+            <field name="perm_unlink">1</field>
+        </record>
+
+        <!-- Permisos para el wizard Design Generator - Administradores -->
         <record id="access_poliza_design_generator_wizard_admin" model="ir.model.access">
             <field name="name">poliza.design.generator.wizard.admin</field>
             <field name="model_id" ref="model_poliza_design_generator_wizard"/>
             <field name="group_id" ref="base.group_system"/>
+            <field name="perm_read">1</field>
+            <field name="perm_write">1</field>
+            <field name="perm_create">1</field>
+            <field name="perm_unlink">1</field>
+        </record>
+
+        <!-- Permisos para el wizard Design Generator - Usuarios del Generador -->
+        <record id="access_poliza_design_generator_wizard_user" model="ir.model.access">
+            <field name="name">poliza.design.generator.wizard.user</field>
+            <field name="model_id" ref="model_poliza_design_generator_wizard"/>
+            <field name="group_id" ref="group_design_generator_user"/>
             <field name="perm_read">1</field>
             <field name="perm_write">1</field>
             <field name="perm_create">1</field>

@@ -148,13 +148,13 @@
             </field>
         </record>
 
-        <!-- Menú para administradores -->
+        <!-- Menú para administradores y usuarios del generador -->
         <menuitem id="menu_design_generator" 
                   name="Generador de Diseños" 
                   parent="menu_poliza_config" 
                   action="action_design_generator" 
                   sequence="30"
-                  groups="base.group_system"/>
+                  groups="base.group_system,LaVenezolana16.group_design_generator_user"/>
 
     </data>
 </odoo>
