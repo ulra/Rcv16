@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vista de lista de tomadores -->
+        <record id="view_poliza_tomador_tree" model="ir.ui.view">
+            <field name="name">poliza.tomador.tree</field>
+            <field name="model">poliza.tomador</field>
+            <field name="arch" type="xml">
+                <tree string="Tomadores/Asegurados">
+                    <field name="name"/>
+                    <field name="cedula_rif"/>
+                    <field name="tipo_documento"/>
+                    <field name="telefono"/>
+                    <field name="email"/>
+                    <field name="total_polizas_tomador"/>
+                    <field name="total_polizas_asegurado"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista de formulario de tomadores -->
+        <record id="view_poliza_tomador_form" model="ir.ui.view">
+            <field name="name">poliza.tomador.form</field>
+            <field name="model">poliza.tomador</field>
+            <field name="arch" type="xml">
+                <form string="Tomador/Asegurado">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Nombre completo..."/>
+                            </h1>
+                        </div>
+                        
+                        <group>
+                            <group string="Información Personal">
+                                <field name="tipo_documento"/>
+                                <field name="cedula_rif"/>
+                                <field name="fecha_nacimiento"/>
+                                <field name="estado_civil"/>
+                                <field name="profesion"/>
+                            </group>
+                            <group string="Información de Contacto">
+                                <field name="telefono"/>
+                                <field name="email"/>
+                                <field name="direccion"/>
+                            </group>
+                        </group>
+
+                        <group>
+                            <group string="Configuración">
+                                <field name="es_tomador"/>
+                                <field name="es_asegurado"/>
+                                <field name="active"/>
+                            </group>
+                            <group string="Estadísticas">
+                                <field name="total_polizas_tomador"/>
+                                <field name="total_polizas_asegurado"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Pólizas como Tomador" attrs="{'invisible': [('total_polizas_tomador', '=', 0)]}">
+                                <field name="polizas_como_tomador" readonly="1">
+                                    <tree>
+                                        <field name="numero_poliza"/>
+                                        <field name="asegurado_id"/>
+                                        <field name="vehiculo_id"/>
+                                        <field name="vigencia_desde"/>
+                                        <field name="vigencia_hasta"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Pólizas como Asegurado" attrs="{'invisible': [('total_polizas_asegurado', '=', 0)]}">
+                                <field name="polizas_como_asegurado" readonly="1">
+                                    <tree>
+                                        <field name="numero_poliza"/>
+                                        <field name="tomador_id"/>
+                                        <field name="vehiculo_id"/>
+                                        <field name="vigencia_desde"/>
+                                        <field name="vigencia_hasta"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Vista de búsqueda -->
+        <record id="view_poliza_tomador_search" model="ir.ui.view">
+            <field name="name">poliza.tomador.search</field>
+            <field name="model">poliza.tomador</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Tomadores/Asegurados">
+                    <field name="name"/>
+                    <field name="cedula_rif"/>
+                    <field name="telefono"/>
+                    <field name="email"/>
+                    <filter string="Tomadores" name="tomadores" domain="[('es_tomador', '=', True)]"/>
+                    <filter string="Asegurados" name="asegurados" domain="[('es_asegurado', '=', True)]"/>
+                    <filter string="Con Pólizas Activas" name="con_polizas" 
+                            domain="['|', ('total_polizas_tomador', '>', 0), ('total_polizas_asegurado', '>', 0)]"/>
+                    <separator/>
+                    <filter string="Activos" name="active" domain="[('active', '=', True)]"/>
+                    <group expand="0" string="Agrupar por">
+                        <filter string="Tipo de Documento" name="group_tipo_documento" context="{'group_by': 'tipo_documento'}"/>
+                        <filter string="Estado Civil" name="group_estado_civil" context="{'group_by': 'estado_civil'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Acción para tomadores -->
+        <record id="action_poliza_tomador" model="ir.actions.act_window">
+            <field name="name">Tomadores/Asegurados</field>
+            <field name="res_model">poliza.tomador</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_poliza_tomador_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    ¡Registra el primer tomador/asegurado!
+                </p>
+                <p>
+                    Gestiona la información de tomadores y asegurados para las pólizas de seguro.
+                    Mantén un registro completo de todos los clientes y sus datos de contacto.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

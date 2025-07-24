@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Datos de demostración para tomadores/asegurados -->
+        <record id="demo_tomador_1" model="poliza.tomador">
+            <field name="name">Juan Carlos Pérez</field>
+            <field name="cedula_rif">V-12345678</field>
+            <field name="tipo_documento">cedula</field>
+            <field name="direccion">Av. Libertador, Caracas, Venezuela</field>
+            <field name="telefono">+58-212-1234567</field>
+            <field name="email">juan.perez@email.com</field>
+            <field name="fecha_nacimiento">1985-03-15</field>
+            <field name="estado_civil">casado</field>
+            <field name="profesion">Ingeniero</field>
+        </record>
+
+        <record id="demo_tomador_2" model="poliza.tomador">
+            <field name="name">María Elena González</field>
+            <field name="cedula_rif">V-87654321</field>
+            <field name="tipo_documento">cedula</field>
+            <field name="direccion">Calle Real, Valencia, Carabobo</field>
+            <field name="telefono">+58-241-9876543</field>
+            <field name="email">maria.gonzalez@email.com</field>
+            <field name="fecha_nacimiento">1990-07-22</field>
+            <field name="estado_civil">soltero</field>
+            <field name="profesion">Doctora</field>
+        </record>
+
+        <record id="demo_empresa_1" model="poliza.tomador">
+            <field name="name">Transportes Los Andes C.A.</field>
+            <field name="cedula_rif">J-30123456-7</field>
+            <field name="tipo_documento">rif</field>
+            <field name="direccion">Zona Industrial, Maracay, Aragua</field>
+            <field name="telefono">+58-243-5555555</field>
+            <field name="email">info@transporteslosandes.com</field>
+            <field name="profesion">Transporte de Carga</field>
+        </record>
+
+        <!-- Datos de demostración para vehículos -->
+        <record id="demo_vehiculo_1" model="poliza.vehiculo">
+            <field name="marca">Toyota</field>
+            <field name="modelo">Corolla</field>
+            <field name="version">XEI</field>
+            <field name="ano">2020</field>
+            <field name="tipo">sedan</field>
+            <field name="puestos">5</field>
+            <field name="placa">ABC123</field>
+            <field name="serial_motor">4A-FE-1234567</field>
+            <field name="uso">particular</field>
+            <field name="color">Blanco</field>
+            <field name="serial_carroceria">JTDBL40E500123456</field>
+            <field name="propietario_id" ref="demo_tomador_1"/>
+            <field name="valor_comercial">25000.00</field>
+            <field name="combustible">gasolina</field>
+            <field name="transmision">automatica</field>
+        </record>
+
+        <record id="demo_vehiculo_2" model="poliza.vehiculo">
+            <field name="marca">Chevrolet</field>
+            <field name="modelo">Aveo</field>
+            <field name="version">LT</field>
+            <field name="ano">2019</field>
+            <field name="tipo">sedan</field>
+            <field name="puestos">5</field>
+            <field name="placa">DEF456</field>
+            <field name="serial_motor">F16D3-7654321</field>
+            <field name="uso">particular</field>
+            <field name="color">Azul</field>
+            <field name="serial_carroceria">KL1TD5DE5KB123456</field>
+            <field name="propietario_id" ref="demo_tomador_2"/>
+            <field name="valor_comercial">18000.00</field>
+            <field name="combustible">gasolina</field>
+            <field name="transmision">manual</field>
+        </record>
+
+        <record id="demo_vehiculo_3" model="poliza.vehiculo">
+            <field name="marca">Ford</field>
+            <field name="modelo">Cargo</field>
+            <field name="version">815</field>
+            <field name="ano">2018</field>
+            <field name="tipo">camion</field>
+            <field name="puestos">3</field>
+            <field name="placa">GHI789</field>
+            <field name="serial_motor">MWM-4.07TCE-987654</field>
+            <field name="uso">comercial</field>
+            <field name="color">Blanco</field>
+            <field name="serial_carroceria">9BFZF81EXJB123456</field>
+            <field name="propietario_id" ref="demo_empresa_1"/>
+            <field name="valor_comercial">45000.00</field>
+            <field name="combustible">diesel</field>
+            <field name="transmision">manual</field>
+        </record>
+
+        <!-- Datos de demostración para pólizas -->
+        <record id="demo_poliza_1" model="poliza.seguro">
+            <field name="tomador_id" ref="demo_tomador_1"/>
+            <field name="asegurado_id" ref="demo_tomador_1"/>
+            <field name="direccion">Av. Libertador, Caracas, Venezuela</field>
+            <field name="telefono">+58-212-1234567</field>
+            <field name="vigencia_desde" eval="(DateTime.now() - timedelta(days=30))"/>
+            <field name="vigencia_hasta" eval="(DateTime.now() + timedelta(days=335))"/>
+            <field name="hora_vigencia">12:00</field>
+            <field name="tipo_pago">contado</field>
+            <field name="sucursal">Caracas Centro</field>
+            <field name="canal_venta">directo</field>
+            <field name="frecuencia_pago">anual</field>
+            <field name="codigo_intermediarios">INT-001</field>
+            <field name="participacion">100.00</field>
+            <field name="moneda">VES</field>
+            <field name="recibo_vigencia_desde" eval="(DateTime.now() - timedelta(days=30))"/>
+            <field name="recibo_vigencia_hasta" eval="(DateTime.now() + timedelta(days=335))"/>
+            <field name="recibo_hora">12:00</field>
+            <field name="tipo_movimiento">emision</field>
+            <field name="recibo_sucursal">Caracas Centro</field>
+            <field name="recibo_canal_venta">Directo</field>
+            <field name="recibo_frecuencia_pago">Anual</field>
+            <field name="total_pagar">1500000.00</field>
+            <field name="producto">Seguro Vehicular Integral</field>
+            <field name="vehiculo_id" ref="demo_vehiculo_1"/>
+            <field name="datos_personal">Cobertura completa para daños propios y a terceros</field>
+            <field name="exceso_limite">50000.00</field>
+            <field name="muerte_invalidez">2000000.00</field>
+            <field name="danos_cosas">1000000.00</field>
+            <field name="defensa_penal">500000.00</field>
+            <field name="gastos_medicos">300000.00</field>
+            <field name="gastos_funerarios">200000.00</field>
+            <field name="state">active</field>
+        </record>
+
+        <record id="demo_poliza_2" model="poliza.seguro">
+            <field name="tomador_id" ref="demo_tomador_2"/>
+            <field name="asegurado_id" ref="demo_tomador_2"/>
+            <field name="direccion">Calle Real, Valencia, Carabobo</field>
+            <field name="telefono">+58-241-9876543</field>
+            <field name="vigencia_desde" eval="(DateTime.now() - timedelta(days=60))"/>
+            <field name="vigencia_hasta" eval="(DateTime.now() + timedelta(days=305))"/>
+            <field name="hora_vigencia">12:00</field>
+            <field name="tipo_pago">credito</field>
+            <field name="sucursal">Valencia</field>
+            <field name="canal_venta">agente</field>
+            <field name="frecuencia_pago">mensual</field>
+            <field name="codigo_intermediarios">INT-002</field>
+            <field name="participacion">100.00</field>
+            <field name="moneda">VES</field>
+            <field name="recibo_vigencia_desde" eval="(DateTime.now() - timedelta(days=60))"/>
+            <field name="recibo_vigencia_hasta" eval="(DateTime.now() + timedelta(days=305))"/>
+            <field name="recibo_hora">12:00</field>
+            <field name="tipo_movimiento">emision</field>
+            <field name="recibo_sucursal">Valencia</field>
+            <field name="recibo_canal_venta">Agente</field>
+            <field name="recibo_frecuencia_pago">Mensual</field>
+            <field name="total_pagar">1200000.00</field>
+            <field name="producto">Seguro Vehicular Básico</field>
+            <field name="vehiculo_id" ref="demo_vehiculo_2"/>
+            <field name="datos_personal">Cobertura básica de responsabilidad civil</field>
+            <field name="exceso_limite">30000.00</field>
+            <field name="muerte_invalidez">1500000.00</field>
+            <field name="danos_cosas">800000.00</field>
+            <field name="defensa_penal">400000.00</field>
+            <field name="gastos_medicos">250000.00</field>
+            <field name="gastos_funerarios">150000.00</field>
+            <field name="state">active</field>
+        </record>
+
+        <record id="demo_poliza_3" model="poliza.seguro">
+            <field name="tomador_id" ref="demo_empresa_1"/>
+            <field name="asegurado_id" ref="demo_empresa_1"/>
+            <field name="direccion">Zona Industrial, Maracay, Aragua</field>
+            <field name="telefono">+58-243-5555555</field>
+            <field name="vigencia_desde" eval="(DateTime.now() - timedelta(days=10))"/>
+            <field name="vigencia_hasta" eval="(DateTime.now() + timedelta(days=355))"/>
+            <field name="hora_vigencia">12:00</field>
+            <field name="tipo_pago">financiado</field>
+            <field name="sucursal">Maracay</field>
+            <field name="canal_venta">broker</field>
+            <field name="frecuencia_pago">trimestral</field>
+            <field name="codigo_intermediarios">INT-003</field>
+            <field name="participacion">100.00</field>
+            <field name="moneda">USD</field>
+            <field name="recibo_vigencia_desde" eval="(DateTime.now() - timedelta(days=10))"/>
+            <field name="recibo_vigencia_hasta" eval="(DateTime.now() + timedelta(days=355))"/>
+            <field name="recibo_hora">12:00</field>
+            <field name="tipo_movimiento">emision</field>
+            <field name="recibo_sucursal">Maracay</field>
+            <field name="recibo_canal_venta">Broker</field>
+            <field name="recibo_frecuencia_pago">Trimestral</field>
+            <field name="total_pagar">2500.00</field>
+            <field name="producto">Seguro Vehicular Comercial</field>
+            <field name="vehiculo_id" ref="demo_vehiculo_3"/>
+            <field name="datos_personal">Cobertura comercial para transporte de carga</field>
+            <field name="exceso_limite">100000.00</field>
+            <field name="muerte_invalidez">3000000.00</field>
+            <field name="danos_cosas">2000000.00</field>
+            <field name="defensa_penal">800000.00</field>
+            <field name="gastos_medicos">500000.00</field>
+            <field name="gastos_funerarios">300000.00</field>
+            <field name="state">active</field>
+        </record>
+    </data>
+</odoo>

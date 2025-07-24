@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Reporte del Carnet RCV -->
+        <record id="action_report_carnet_rcv" model="ir.actions.report">
+            <field name="name">Carnet RCV</field>
+            <field name="model">poliza.seguro</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">poliza_seguro.report_carnet_rcv_template</field>
+            <field name="report_file">poliza_seguro.report_carnet_rcv_template</field>
+            <field name="binding_model_id" ref="model_poliza_seguro"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="base.paperformat_a4"/>
+        </record>
+
+        <!-- Template del carnet RCV -->
+        <template id="report_carnet_rcv_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="poliza">
+                    <div class="page">
+                        <style>
+                            .carnet-container {
+                                width: 85mm;
+                                height: 54mm;
+                                border: 2px solid #000;
+                                margin: 20px auto;
+                                padding: 3mm;
+                                font-family: Arial, sans-serif;
+                                font-size: 8px;
+                                line-height: 1.2;
+                                page-break-inside: avoid;
+                            }
+                            .carnet-header {
+                                text-align: center;
+                                font-weight: bold;
+                                font-size: 9px;
+                                margin-bottom: 2mm;
+                                border-bottom: 1px solid #000;
+                                padding-bottom: 1mm;
+                            }
+                            .carnet-title {
+                                font-size: 7px;
+                                margin-bottom: 1mm;
+                            }
+                            .carnet-row {
+                                display: flex;
+                                justify-content: space-between;
+                                margin-bottom: 0.5mm;
+                            }
+                            .carnet-field {
+                                flex: 1;
+                                margin-right: 2mm;
+                            }
+                            .carnet-field:last-child {
+                                margin-right: 0;
+                            }
+                            .carnet-label {
+                                font-weight: bold;
+                                font-size: 6px;
+                            }
+                            .carnet-value {
+                                font-size: 7px;
+                                border-bottom: 1px solid #ccc;
+                                min-height: 8px;
+                                padding-bottom: 1px;
+                            }
+                            .carnet-footer {
+                                text-align: center;
+                                font-size: 6px;
+                                margin-top: 2mm;
+                                border-top: 1px solid #000;
+                                padding-top: 1mm;
+                            }
+                        </style>
+
+                        <!-- Carnet RCV -->
+                        <div class="carnet-container">
+                            <!-- Encabezado -->
+                            <div class="carnet-header">
+                                LA VENEZOLANA DE SEGUROS Y VIDA
+                            </div>
+                            <div class="carnet-title" style="text-align: center;">
+                                CARNET DE RESPONSABILIDAD CIVIL VEHICULAR OBLIGATORIA
+                            </div>
+
+                            <!-- Información del carnet -->
+                            <div style="margin-top: 2mm;">
+                                <!-- Fila 1: Número de póliza y Nombre -->
+                                <div class="carnet-row">
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">N° PÓLIZA:</div>
+                                        <div class="carnet-value"><span t-field="poliza.numero_poliza"/></div>
+                                    </div>
+                                    <div class="carnet-field" style="flex: 2;">
+                                        <div class="carnet-label">NOMBRE DEL ASEGURADO:</div>
+                                        <div class="carnet-value"><span t-field="poliza.nombre_asegurador"/></div>
+                                    </div>
+                                </div>
+
+                                <!-- Fila 2: Cédula/RIF y Teléfono -->
+                                <div class="carnet-row">
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">CÉDULA/RIF:</div>
+                                        <div class="carnet-value"><span t-field="poliza.cedula_rif_asegurador"/></div>
+                                    </div>
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">TELÉFONO:</div>
+                                        <div class="carnet-value"><span t-field="poliza.telefono_asegurador"/></div>
+                                    </div>
+                                </div>
+
+                                <!-- Fila 3: Fechas -->
+                                <div class="carnet-row">
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">FECHA INICIO:</div>
+                                        <div class="carnet-value"><span t-field="poliza.vigencia_desde" t-options="{'widget': 'date'}"/></div>
+                                    </div>
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">FECHA FIN:</div>
+                                        <div class="carnet-value"><span t-field="poliza.vigencia_hasta" t-options="{'widget': 'date'}"/></div>
+                                    </div>
+                                </div>
+
+                                <!-- Fila 4: Marca y Puestos -->
+                                <div class="carnet-row">
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">MARCA:</div>
+                                        <div class="carnet-value"><span t-field="poliza.marca_vehiculo"/></div>
+                                    </div>
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">PUESTOS:</div>
+                                        <div class="carnet-value"><span t-field="poliza.puestos_vehiculo"/></div>
+                                    </div>
+                                </div>
+
+                                <!-- Fila 5: Placa y Color -->
+                                <div class="carnet-row">
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">PLACA:</div>
+                                        <div class="carnet-value"><span t-field="poliza.placa_vehiculo"/></div>
+                                    </div>
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">COLOR:</div>
+                                        <div class="carnet-value"><span t-field="poliza.color_vehiculo"/></div>
+                                    </div>
+                                </div>
+
+                                <!-- Fila 6: Serial Carrocería y Modelo -->
+                                <div class="carnet-row">
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">SERIAL CARROCERÍA:</div>
+                                        <div class="carnet-value"><span t-field="poliza.serial_carroceria"/></div>
+                                    </div>
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">MODELO:</div>
+                                        <div class="carnet-value"><span t-field="poliza.modelo_vehiculo"/></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pie del carnet -->
+                            <div class="carnet-footer">
+                                <div style="font-weight: bold;">RESPONSABILIDAD CIVIL VEHICULAR OBLIGATORIA</div>
+                                <div>Este carnet debe portarse en el vehículo en todo momento</div>
+                            </div>
+                        </div>
+
+                        <!-- Instrucciones de corte -->
+                        <div style="text-align: center; margin-top: 10mm; font-size: 10px; color: #666;">
+                            ✂ Cortar por la línea punteada ✂
+                        </div>
+
+                        <!-- Segundo carnet (copia) -->
+                        <div class="carnet-container" style="border-style: dashed;">
+                            <!-- Encabezado -->
+                            <div class="carnet-header">
+                                LA VENEZOLANA DE SEGUROS Y VIDA
+                            </div>
+                            <div class="carnet-title" style="text-align: center;">
+                                CARNET DE RESPONSABILIDAD CIVIL VEHICULAR OBLIGATORIA (COPIA)
+                            </div>
+
+                            <!-- Información del carnet (repetida) -->
+                            <div style="margin-top: 2mm;">
+                                <!-- Fila 1: Número de póliza y Nombre -->
+                                <div class="carnet-row">
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">N° PÓLIZA:</div>
+                                        <div class="carnet-value"><span t-field="poliza.numero_poliza"/></div>
+                                    </div>
+                                    <div class="carnet-field" style="flex: 2;">
+                                        <div class="carnet-label">NOMBRE DEL ASEGURADO:</div>
+                                        <div class="carnet-value"><span t-field="poliza.nombre_asegurador"/></div>
+                                    </div>
+                                </div>
+
+                                <!-- Fila 2: Cédula/RIF y Teléfono -->
+                                <div class="carnet-row">
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">CÉDULA/RIF:</div>
+                                        <div class="carnet-value"><span t-field="poliza.cedula_rif_asegurador"/></div>
+                                    </div>
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">TELÉFONO:</div>
+                                        <div class="carnet-value"><span t-field="poliza.telefono_asegurador"/></div>
+                                    </div>
+                                </div>
+
+                                <!-- Fila 3: Fechas -->
+                                <div class="carnet-row">
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">FECHA INICIO:</div>
+                                        <div class="carnet-value"><span t-field="poliza.vigencia_desde" t-options="{'widget': 'date'}"/></div>
+                                    </div>
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">FECHA FIN:</div>
+                                        <div class="carnet-value"><span t-field="poliza.vigencia_hasta" t-options="{'widget': 'date'}"/></div>
+                                    </div>
+                                </div>
+
+                                <!-- Fila 4: Marca y Puestos -->
+                                <div class="carnet-row">
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">MARCA:</div>
+                                        <div class="carnet-value"><span t-field="poliza.marca_vehiculo"/></div>
+                                    </div>
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">PUESTOS:</div>
+                                        <div class="carnet-value"><span t-field="poliza.puestos_vehiculo"/></div>
+                                    </div>
+                                </div>
+
+                                <!-- Fila 5: Placa y Color -->
+                                <div class="carnet-row">
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">PLACA:</div>
+                                        <div class="carnet-value"><span t-field="poliza.placa_vehiculo"/></div>
+                                    </div>
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">COLOR:</div>
+                                        <div class="carnet-value"><span t-field="poliza.color_vehiculo"/></div>
+                                    </div>
+                                </div>
+
+                                <!-- Fila 6: Serial Carrocería y Modelo -->
+                                <div class="carnet-row">
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">SERIAL CARROCERÍA:</div>
+                                        <div class="carnet-value"><span t-field="poliza.serial_carroceria"/></div>
+                                    </div>
+                                    <div class="carnet-field">
+                                        <div class="carnet-label">MODELO:</div>
+                                        <div class="carnet-value"><span t-field="poliza.modelo_vehiculo"/></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pie del carnet -->
+                            <div class="carnet-footer">
+                                <div style="font-weight: bold;">RESPONSABILIDAD CIVIL VEHICULAR OBLIGATORIA</div>
+                                <div>Este carnet debe portarse en el vehículo en todo momento</div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

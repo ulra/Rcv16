@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vista de lista de pólizas -->
+        <record id="view_poliza_seguro_tree" model="ir.ui.view">
+            <field name="name">poliza.seguro.tree</field>
+            <field name="model">poliza.seguro</field>
+            <field name="arch" type="xml">
+                <tree string="Pólizas de Seguro" decoration-success="state=='active'" 
+                      decoration-danger="state=='expired'" decoration-muted="state=='cancelled'">
+                    <field name="numero_poliza"/>
+                    <field name="tomador_id"/>
+                    <field name="asegurado_id"/>
+                    <field name="vehiculo_id"/>
+                    <field name="vigencia_desde"/>
+                    <field name="vigencia_hasta"/>
+                    <field name="total_pagar"/>
+                    <field name="moneda"/>
+                    <field name="state" widget="badge"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista de formulario de pólizas -->
+        <record id="view_poliza_seguro_form" model="ir.ui.view">
+            <field name="name">poliza.seguro.form</field>
+            <field name="model">poliza.seguro</field>
+            <field name="arch" type="xml">
+                <form string="Póliza de Seguro">
+                    <header>
+                        <button name="action_activate" string="Activar" type="object" 
+                                class="btn-primary" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        <button name="action_cancel" string="Cancelar" type="object" 
+                                class="btn-secondary" attrs="{'invisible': [('state', 'in', ['cancelled', 'expired'])]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,active,expired"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="numero_poliza" readonly="1"/>
+                            </h1>
+                        </div>
+                        
+                        <notebook>
+                            <!-- Página 1: Datos del Tomador y Asegurado -->
+                            <page string="Tomador y Asegurado">
+                                <group>
+                                    <group string="Datos del Tomador">
+                                        <field name="tomador_id" options="{'no_create': False, 'no_open': False}"/>
+                                        <field name="tomador_cedula" readonly="1"/>
+                                    </group>
+                                    <group string="Datos del Asegurado">
+                                        <field name="asegurado_id" options="{'no_create': False, 'no_open': False}"/>
+                                        <field name="asegurado_cedula" readonly="1"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group string="Información de Contacto">
+                                        <field name="direccion"/>
+                                        <field name="telefono"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <!-- Página 2: Datos de la Póliza -->
+                            <page string="Datos de la Póliza">
+                                <group>
+                                    <group string="Vigencia">
+                                        <field name="vigencia_desde"/>
+                                        <field name="vigencia_hasta"/>
+                                        <field name="hora_vigencia"/>
+                                    </group>
+                                    <group string="Información Comercial">
+                                        <field name="tipo_pago"/>
+                                        <field name="sucursal"/>
+                                        <field name="canal_venta"/>
+                                        <field name="frecuencia_pago"/>
+                                        <field name="moneda"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group string="Intermediarios">
+                                        <field name="codigo_intermediarios"/>
+                                        <field name="participacion"/>
+                                    </group>
+                                    <group string="Producto">
+                                        <field name="producto"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <!-- Página 3: Datos del Recibo -->
+                            <page string="Datos del Recibo">
+                                <group>
+                                    <group string="Vigencia del Recibo">
+                                        <field name="recibo_vigencia_desde"/>
+                                        <field name="recibo_vigencia_hasta"/>
+                                        <field name="recibo_hora"/>
+                                    </group>
+                                    <group string="Información del Recibo">
+                                        <field name="tipo_movimiento"/>
+                                        <field name="recibo_sucursal"/>
+                                        <field name="recibo_canal_venta"/>
+                                        <field name="recibo_frecuencia_pago"/>
+                                        <field name="total_pagar"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <!-- Página 4: Datos del Vehículo -->
+                            <page string="Vehículo">
+                                <group>
+                                    <field name="vehiculo_id" options="{'no_create': False, 'no_open': False}"/>
+                                </group>
+                                <group>
+                                    <group string="Información del Vehículo">
+                                        <field name="marca_vehiculo" readonly="1"/>
+                                        <field name="modelo_vehiculo" readonly="1"/>
+                                        <field name="puestos_vehiculo" readonly="1"/>
+                                        <field name="placa_vehiculo" readonly="1"/>
+                                    </group>
+                                    <group string="Detalles">
+                                        <field name="color_vehiculo" readonly="1"/>
+                                        <field name="serial_carroceria" readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <!-- Página 5: Cobertura -->
+                            <page string="Cobertura">
+                                <group>
+                                    <field name="datos_personal"/>
+                                </group>
+                                <group>
+                                    <group string="Límites de Cobertura">
+                                        <field name="exceso_limite"/>
+                                        <field name="muerte_invalidez"/>
+                                        <field name="danos_cosas"/>
+                                        <field name="defensa_penal"/>
+                                    </group>
+                                    <group string="Gastos Cubiertos">
+                                        <field name="gastos_medicos"/>
+                                        <field name="gastos_funerarios"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Vista de búsqueda -->
+        <record id="view_poliza_seguro_search" model="ir.ui.view">
+            <field name="name">poliza.seguro.search</field>
+            <field name="model">poliza.seguro</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Pólizas">
+                    <field name="numero_poliza"/>
+                    <field name="tomador_id"/>
+                    <field name="asegurado_id"/>
+                    <field name="vehiculo_id"/>
+                    <field name="placa_vehiculo"/>
+                    <filter string="Activas" name="active" domain="[('state', '=', 'active')]"/>
+                    <filter string="Vencidas" name="expired" domain="[('state', '=', 'expired')]"/>
+                    <filter string="Canceladas" name="cancelled" domain="[('state', '=', 'cancelled')]"/>
+                    <separator/>
+                    <filter string="Este Mes" name="this_month" 
+                            domain="[('vigencia_desde', '&gt;=', (context_today() - relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                     ('vigencia_desde', '&lt;', (context_today() + relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                    <group expand="0" string="Agrupar por">
+                        <filter string="Estado" name="group_state" context="{'group_by': 'state'}"/>
+                        <filter string="Tomador" name="group_tomador" context="{'group_by': 'tomador_id'}"/>
+                        <filter string="Mes de Vigencia" name="group_month" context="{'group_by': 'vigencia_desde:month'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Acción para pólizas -->
+        <record id="action_poliza_seguro" model="ir.actions.act_window">
+            <field name="name">Pólizas de Seguro</field>
+            <field name="res_model">poliza.seguro</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_poliza_seguro_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    ¡Crea tu primera póliza de seguro!
+                </p>
+                <p>
+                    Gestiona las pólizas de seguro vehicular de La Venezolana de Seguros y Vida.
+                    Registra tomadores, asegurados, vehículos y genera automáticamente los carnets RCV.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vista de lista de vehículos -->
+        <record id="view_poliza_vehiculo_tree" model="ir.ui.view">
+            <field name="name">poliza.vehiculo.tree</field>
+            <field name="model">poliza.vehiculo</field>
+            <field name="arch" type="xml">
+                <tree string="Vehículos" decoration-success="poliza_activa==True">
+                    <field name="placa"/>
+                    <field name="marca"/>
+                    <field name="modelo"/>
+                    <field name="ano"/>
+                    <field name="tipo"/>
+                    <field name="color"/>
+                    <field name="uso"/>
+                    <field name="propietario_id"/>
+                    <field name="total_polizas"/>
+                    <field name="poliza_activa" widget="boolean"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista de formulario de vehículos -->
+        <record id="view_poliza_vehiculo_form" model="ir.ui.view">
+            <field name="name">poliza.vehiculo.form</field>
+            <field name="model">poliza.vehiculo</field>
+            <field name="arch" type="xml">
+                <form string="Vehículo">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        
+                        <group>
+                            <group string="Información Básica">
+                                <field name="marca"/>
+                                <field name="modelo"/>
+                                <field name="version"/>
+                                <field name="ano"/>
+                                <field name="tipo"/>
+                                <field name="puestos"/>
+                            </group>
+                            <group string="Identificación">
+                                <field name="placa"/>
+                                <field name="serial_motor"/>
+                                <field name="serial_carroceria"/>
+                                <field name="color"/>
+                                <field name="uso"/>
+                            </group>
+                        </group>
+
+                        <group>
+                            <group string="Propietario">
+                                <field name="propietario_id"/>
+                            </group>
+                            <group string="Información Adicional">
+                                <field name="valor_comercial"/>
+                                <field name="combustible"/>
+                                <field name="transmision"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+
+                        <group>
+                            <group string="Estadísticas">
+                                <field name="total_polizas"/>
+                                <field name="poliza_activa"/>
+                            </group>
+                        </group>
+
+                        <group string="Otros Datos">
+                            <field name="otros" nolabel="1"/>
+                        </group>
+
+                        <notebook>
+                            <page string="Pólizas" attrs="{'invisible': [('total_polizas', '=', 0)]}">
+                                <field name="polizas_ids" readonly="1">
+                                    <tree decoration-success="state=='active'" 
+                                          decoration-danger="state=='expired'" 
+                                          decoration-muted="state=='cancelled'">
+                                        <field name="numero_poliza"/>
+                                        <field name="tomador_id"/>
+                                        <field name="asegurado_id"/>
+                                        <field name="vigencia_desde"/>
+                                        <field name="vigencia_hasta"/>
+                                        <field name="total_pagar"/>
+                                        <field name="state" widget="badge"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Vista de búsqueda -->
+        <record id="view_poliza_vehiculo_search" model="ir.ui.view">
+            <field name="name">poliza.vehiculo.search</field>
+            <field name="model">poliza.vehiculo</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Vehículos">
+                    <field name="placa"/>
+                    <field name="marca"/>
+                    <field name="modelo"/>
+                    <field name="serial_motor"/>
+                    <field name="serial_carroceria"/>
+                    <field name="propietario_id"/>
+                    <filter string="Con Póliza Activa" name="con_poliza_activa" domain="[('poliza_activa', '=', True)]"/>
+                    <filter string="Sin Póliza" name="sin_poliza" domain="[('total_polizas', '=', 0)]"/>
+                    <separator/>
+                    <filter string="Uso Particular" name="particular" domain="[('uso', '=', 'particular')]"/>
+                    <filter string="Uso Comercial" name="comercial" domain="[('uso', '=', 'comercial')]"/>
+                    <separator/>
+                    <filter string="Activos" name="active" domain="[('active', '=', True)]"/>
+                    <group expand="0" string="Agrupar por">
+                        <filter string="Marca" name="group_marca" context="{'group_by': 'marca'}"/>
+                        <filter string="Tipo" name="group_tipo" context="{'group_by': 'tipo'}"/>
+                        <filter string="Uso" name="group_uso" context="{'group_by': 'uso'}"/>
+                        <filter string="Año" name="group_ano" context="{'group_by': 'ano'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Acción para vehículos -->
+        <record id="action_poliza_vehiculo" model="ir.actions.act_window">
+            <field name="name">Vehículos</field>
+            <field name="res_model">poliza.vehiculo</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_poliza_vehiculo_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    ¡Registra el primer vehículo!
+                </p>
+                <p>
+                    Gestiona la información de vehículos para las pólizas de seguro.
+                    Mantén un registro completo de todos los vehículos asegurados.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

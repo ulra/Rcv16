@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Fondo -->
+  <rect width="128" height="128" fill="#1e3a8a" rx="8"/>
+  
+  <!-- Escudo/Marco principal -->
+  <path d="M20 25 L108 25 L108 85 C108 95 98 103 88 103 L40 103 C30 103 20 95 20 85 Z" 
+        fill="#3b82f6" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Carro -->
+  <g transform="translate(30, 40)">
+    <!-- Carrocería -->
+    <rect x="5" y="15" width="58" height="20" rx="3" fill="#ffffff"/>
+    <!-- Ventanas -->
+    <rect x="10" y="8" width="48" height="12" rx="2" fill="#e5e7eb"/>
+    <!-- Ruedas -->
+    <circle cx="15" cy="40" r="6" fill="#374151"/>
+    <circle cx="53" cy="40" r="6" fill="#374151"/>
+    <!-- Detalles del carro -->
+    <rect x="8" y="18" width="4" height="8" fill="#fbbf24"/>
+    <rect x="56" y="18" width="4" height="8" fill="#ef4444"/>
+  </g>
+  
+  <!-- Texto -->
+  <text x="64" y="75" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="12" font-weight="bold">SEGUROS</text>
+  
+  <!-- Escudo/Protección -->
+  <path d="M64 85 L54 95 L64 105 L74 95 Z" fill="#10b981" stroke="#ffffff" stroke-width="1"/>
+  <text x="64" y="98" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="8">✓</text>
+  
+  <!-- Decoración venezolana -->
+  <rect x="15" y="110" width="98" height="3" fill="#fbbf24"/>
+  <rect x="15" y="114" width="98" height="3" fill="#3b82f6"/>
+  <rect x="15" y="118" width="98" height="3" fill="#ef4444"/>
+</svg>
