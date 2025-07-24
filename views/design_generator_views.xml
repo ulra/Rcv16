@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vista de lista del generador de diseños -->
+        <record id="view_design_generator_tree" model="ir.ui.view">
+            <field name="name">poliza.design.generator.tree</field>
+            <field name="model">poliza.design.generator</field>
+            <field name="arch" type="xml">
+                <tree string="Generador de Diseños">
+                    <field name="name"/>
+                    <field name="design_type"/>
+                    <field name="state" decoration-info="state=='draft'" decoration-warning="state=='analyzing'" decoration-success="state=='ready'" decoration-muted="state=='applied'" decoration-danger="state=='error'"/>
+                    <field name="pdf_filename"/>
+                    <field name="create_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Vista de formulario del generador de diseños -->
+        <record id="view_design_generator_form" model="ir.ui.view">
+            <field name="name">poliza.design.generator.form</field>
+            <field name="model">poliza.design.generator</field>
+            <field name="arch" type="xml">
+                <form string="Generador de Diseños">
+                    <header>
+                        <button name="action_analyze_pdf" type="object" string="Analizar PDF" 
+                                class="btn-primary" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        <button name="action_apply_design" type="object" string="Aplicar Diseño" 
+                                class="btn-success" attrs="{'invisible': [('state', '!=', 'ready')]}"/>
+                        <button name="action_restore_backup" type="object" string="Restaurar Original" 
+                                class="btn-warning" attrs="{'invisible': [('state', '!=', 'applied')]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,analyzing,ready,applied"/>
+                    </header>
+                    
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <!-- Botones adicionales si es necesario -->
+                        </div>
+                        
+                        <group>
+                            <group>
+                                <field name="name" placeholder="Ej: Diseño Carnet Personalizado"/>
+                                <field name="design_type"/>
+                                <field name="active"/>
+                            </group>
+                            <group>
+                                <field name="pdf_filename" readonly="1"/>
+                                <field name="create_date" readonly="1"/>
+                            </group>
+                        </group>
+                        
+                        <group string="Archivo PDF">
+                            <field name="pdf_file" filename="pdf_filename" 
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Análisis" attrs="{'invisible': [('analysis_result', '=', False)]}">
+                                <group>
+                                    <field name="analysis_result" readonly="1" nolabel="1"/>
+                                </group>
+                            </page>
+                            
+                            <page string="Elementos Extraídos" attrs="{'invisible': [('extracted_elements', '=', False)]}">
+                                <group>
+                                    <field name="extracted_elements" readonly="1" nolabel="1" widget="ace" options="{'mode': 'json'}"/>
+                                </group>
+                            </page>
+                            
+                            <page string="Template Generado" attrs="{'invisible': [('generated_template', '=', False)]}">
+                                <group>
+                                    <field name="generated_template" readonly="1" nolabel="1" widget="ace" options="{'mode': 'xml'}"/>
+                                </group>
+                            </page>
+                            
+                            <page string="Vista Previa" attrs="{'invisible': [('preview_html', '=', False)]}">
+                                <group>
+                                    <field name="preview_html" readonly="1" nolabel="1"/>
+                                </group>
+                            </page>
+                            
+                            <page string="Error" attrs="{'invisible': [('error_message', '=', False)]}">
+                                <group>
+                                    <div class="alert alert-danger" role="alert">
+                                        <field name="error_message" readonly="1" nolabel="1"/>
+                                    </div>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Vista de búsqueda -->
+        <record id="view_design_generator_search" model="ir.ui.view">
+            <field name="name">poliza.design.generator.search</field>
+            <field name="model">poliza.design.generator</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Generador de Diseños">
+                    <field name="name"/>
+                    <field name="design_type"/>
+                    <field name="state"/>
+                    
+                    <filter string="Borradores" name="draft" domain="[('state', '=', 'draft')]"/>
+                    <filter string="Listos" name="ready" domain="[('state', '=', 'ready')]"/>
+                    <filter string="Aplicados" name="applied" domain="[('state', '=', 'applied')]"/>
+                    <filter string="Con Errores" name="error" domain="[('state', '=', 'error')]"/>
+                    
+                    <separator/>
+                    <filter string="Carnet RCV" name="carnet" domain="[('design_type', '=', 'carnet')]"/>
+                    <filter string="Póliza" name="poliza" domain="[('design_type', '=', 'poliza')]"/>
+                    <filter string="Ambos" name="both" domain="[('design_type', '=', 'both')]"/>
+                    
+                    <separator/>
+                    <filter string="Activos" name="active" domain="[('active', '=', True)]"/>
+                    <filter string="Archivados" name="inactive" domain="[('active', '=', False)]"/>
+                    
+                    <group expand="0" string="Agrupar por">
+                        <filter string="Tipo de Diseño" name="group_design_type" context="{'group_by': 'design_type'}"/>
+                        <filter string="Estado" name="group_state" context="{'group_by': 'state'}"/>
+                        <filter string="Fecha de Creación" name="group_create_date" context="{'group_by': 'create_date:month'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Acción para el generador de diseños -->
+        <record id="action_design_generator" model="ir.actions.act_window">
+            <field name="name">Generador de Diseños</field>
+            <field name="res_model">poliza.design.generator</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    ¡Crea tu primer diseño personalizado!
+                </p>
+                <p>
+                    Sube un PDF con el diseño de referencia y el sistema generará automáticamente 
+                    los templates personalizados para tus pólizas y carnets RCV.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menú para administradores -->
+        <menuitem id="menu_design_generator" 
+                  name="Generador de Diseños" 
+                  parent="menu_poliza_config" 
+                  action="action_design_generator" 
+                  sequence="30"
+                  groups="base.group_system"/>
+
+    </data>
+</odoo>

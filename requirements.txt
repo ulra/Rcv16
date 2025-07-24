@@ -1,0 +1,12 @@
+# Dependencias para el Generador de Diseños desde PDF
+# Instalar con: pip install -r requirements.txt
+
+# Para procesamiento de PDFs
+PyPDF2>=3.0.0
+PyMuPDF>=1.23.0
+
+# Para análisis de imágenes (opcional)
+Pillow>=9.0.0
+
+# Para procesamiento de texto avanzado (opcional)
+python-docx>=0.8.11
