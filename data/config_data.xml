@@ -31,9 +31,6 @@
             <field name="dpi">90</field>
         </record>
 
-        <!-- Actualizar el reporte del carnet para usar el formato personalizado -->
-        <record id="action_report_carnet_rcv" model="ir.actions.report">
-            <field name="paperformat_id" ref="paperformat_carnet_rcv"/>
-        </record>
+
     </data>
 </odoo>

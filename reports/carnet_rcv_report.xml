@@ -10,7 +10,7 @@
             <field name="report_file">poliza_seguro.report_carnet_rcv_template</field>
             <field name="binding_model_id" ref="model_poliza_seguro"/>
             <field name="binding_type">report</field>
-            <field name="paperformat_id" ref="base.paperformat_a4"/>
+            <field name="paperformat_id" ref="poliza_seguro.paperformat_carnet_rcv"/>
         </record>
 
         <!-- Template del carnet RCV -->
