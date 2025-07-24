@@ -84,12 +84,14 @@ class PolizaTomador(models.Model):
     # Campos computados
     total_polizas_tomador = fields.Integer(
         string='Total Pólizas como Tomador',
-        compute='_compute_total_polizas'
+        compute='_compute_total_polizas',
+        store=True
     )
     
     total_polizas_asegurado = fields.Integer(
         string='Total Pólizas como Asegurado',
-        compute='_compute_total_polizas'
+        compute='_compute_total_polizas',
+        store=True
     )
     
     active = fields.Boolean(default=True)

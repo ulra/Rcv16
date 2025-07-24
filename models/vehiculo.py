@@ -125,12 +125,14 @@ class PolizaVehiculo(models.Model):
     # Campos computados
     total_polizas = fields.Integer(
         string='Total de Pólizas',
-        compute='_compute_total_polizas'
+        compute='_compute_total_polizas',
+        store=True
     )
     
     poliza_activa = fields.Boolean(
         string='Tiene Póliza Activa',
-        compute='_compute_poliza_activa'
+        compute='_compute_poliza_activa',
+        store=True
     )
     
     active = fields.Boolean(default=True)
