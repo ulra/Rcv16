@@ -21,6 +21,7 @@
     'depends': ['base', 'mail', 'web'],
     'data': [
         'security/ir.model.access.csv',
+        'security/design_generator_security.xml',
         'data/sequence_data.xml',
         'data/config_data.xml',
         'views/poliza_views.xml',
@@ -28,7 +29,6 @@
         'views/vehiculo_views.xml',
         'views/design_generator_views.xml',
         'wizard/design_generator_wizard_views.xml',
-        'security/design_generator_security.xml',
         'views/menu_views.xml',
         'reports/poliza_report.xml',
         'reports/carnet_rcv_report.xml',
