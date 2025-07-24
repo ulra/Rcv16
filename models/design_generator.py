@@ -21,6 +21,7 @@ except ImportError:
 class DesignGenerator(models.Model):
     _name = 'poliza.design.generator'
     _description = 'Generador de Diseños desde PDF'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'create_date desc'
 
     name = fields.Char(
@@ -41,7 +42,7 @@ class DesignGenerator(models.Model):
         ('poliza', 'Póliza Completa'),
         ('carnet', 'Carnet RCV'),
         ('both', 'Ambos')
-    ], string='Tipo de Diseño', required=True, default='carnet')
+    ], string='Tipo de Diseño', required=True, default='carnet', tracking=True)
     
     state = fields.Selection([
         ('draft', 'Borrador'),
@@ -49,7 +50,7 @@ class DesignGenerator(models.Model):
         ('ready', 'Listo para Aplicar'),
         ('applied', 'Aplicado'),
         ('error', 'Error')
-    ], string='Estado', default='draft')
+    ], string='Estado', default='draft', tracking=True)
     
     analysis_result = fields.Text(
         string='Resultado del Análisis',
