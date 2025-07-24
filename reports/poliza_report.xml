@@ -6,8 +6,8 @@
             <field name="name">Póliza de Seguro</field>
             <field name="model">poliza.seguro</field>
             <field name="report_type">qweb-pdf</field>
-            <field name="report_name">poliza_seguro.report_poliza_template</field>
-            <field name="report_file">poliza_seguro.report_poliza_template</field>
+            <field name="report_name">report_poliza_template</field>
+            <field name="report_file">report_poliza_template</field>
             <field name="binding_model_id" ref="model_poliza_seguro"/>
             <field name="binding_type">report</field>
         </record>
