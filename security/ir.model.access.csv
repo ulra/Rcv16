@@ -2,5 +2,3 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_poliza_seguro_user,poliza.seguro.user,model_poliza_seguro,base.group_user,1,1,1,1
 access_poliza_tomador_user,poliza.tomador.user,model_poliza_tomador,base.group_user,1,1,1,1
 access_poliza_vehiculo_user,poliza.vehiculo.user,model_poliza_vehiculo,base.group_user,1,1,1,1
-access_poliza_design_generator_admin,poliza.design.generator.admin,model_poliza_design_generator,base.group_system,1,1,1,1
-access_poliza_design_generator_wizard_admin,poliza.design.generator.wizard.admin,model_poliza_design_generator_wizard,base.group_system,1,1,1,1
