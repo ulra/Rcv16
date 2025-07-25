@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Archivo de seguridad temporal para resolver dependencias -->
+        <!-- Este archivo puede ser eliminado después de limpiar la base de datos -->
+    </data>
+</odoo>

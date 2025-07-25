@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'La Venezolana de Seguros y Vida',
-    'version': '16.0.2.5.0',
+    'version': '16.0.2.6.0',
     'category': 'Insurance',
     'summary': 'Gestión de Pólizas de Seguros Vehiculares',
     'description': """
@@ -21,6 +21,7 @@
     'depends': ['base', 'mail', 'web'],
     'data': [
         'security/ir.model.access.csv',
+        'security/design_generator_security.xml',
         'data/sequence_data.xml',
         'data/config_data.xml',
         'views/poliza_views.xml',
