@@ -10,8 +10,8 @@ Módulo completo para la gestión de pólizas de seguros vehiculares de "La Vene
 - **Numeración automática** de pólizas con secuencia personalizable
 - **Estados de póliza**: Borrador, Activa, Vencida, Cancelada
 - **Seguimiento completo** de vigencias y vencimientos
-- **Integración con el sistema de mensajería** de Odoo
-
+- **Integración con el sistema de mensajería.** de Odoo
+      
 ### ✅ Datos del Tomador y Asegurado
 - Registro completo de tomadores y asegurados
 - Validación de cédulas/RIF únicos
