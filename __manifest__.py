@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'La Venezolana de Seguros y Vida',
-    'version': '16.0.2.16.0',
+    'version': '16.0.2.19.0',
     'category': 'Insurance',
     'summary': 'Gestión de Pólizas de Seguros Vehiculares',
     'description': """
@@ -20,7 +20,7 @@
     'website': 'https://www.tuempresa.com',
     'depends': ['base', 'mail', 'web'],
     'external_dependencies': {
-        'python': ['PyPDF2', 'reportlab'],
+        'python': ['pypdf', 'PyPDF2', 'reportlab'],
     },
     'data': [
         'security/ir.model.access.csv',
