@@ -3,3 +3,4 @@
 from . import poliza
 from . import tomador
 from . import vehiculo
+from . import pdf_template

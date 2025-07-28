@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista de lista para plantillas PDF -->
+    <record id="view_pdf_template_tree" model="ir.ui.view">
+        <field name="name">pdf.template.tree</field>
+        <field name="model">pdf.template</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="is_default"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de formulario para plantillas PDF -->
+    <record id="view_pdf_template_form" model="ir.ui.view">
+        <field name="name">pdf.template.form</field>
+        <field name="model">pdf.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" required="1"/>
+                            <field name="description"/>
+                        </group>
+                        <group>
+                            <field name="is_default"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group string="Archivo de Plantilla PDF">
+                        <field name="template_file" filename="template_filename"/>
+                        <field name="template_filename" invisible="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción para plantillas PDF -->
+    <record id="action_pdf_template" model="ir.actions.act_window">
+        <field name="name">Plantillas PDF</field>
+        <field name="res_model">pdf.template</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crear una nueva plantilla PDF
+            </p>
+            <p>
+                Aquí puede gestionar las plantillas PDF que se utilizarán para generar las pólizas.
+                Suba un archivo PDF con campos rellenables para personalizar la impresión de pólizas.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menú para plantillas PDF -->
+    <menuitem id="menu_pdf_template"
+              name="Plantillas PDF"
+              parent="menu_poliza_config"
+              action="action_pdf_template"
+              sequence="30"/>
+
+    <!-- Agregar botón a la vista de póliza -->
+    <record id="view_poliza_form_inherit_pdf" model="ir.ui.view">
+        <field name="name">poliza.form.inherit.pdf</field>
+        <field name="model">poliza.poliza</field>
+        <field name="inherit_id" ref="view_poliza_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_print_custom_pdf" 
+                        string="Imprimir PDF Personalizado" 
+                        type="object" 
+                        class="btn-primary"
+                        icon="fa-file-pdf-o"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

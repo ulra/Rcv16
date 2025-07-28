@@ -2,6 +2,10 @@
 
 from odoo import models, fields, api
 from datetime import datetime, timedelta
+import base64
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class PolizaSeguro(models.Model):
@@ -180,6 +184,62 @@ class PolizaSeguro(models.Model):
         string='Serial Carrocería',
         readonly=True
     )
+    
+    # Campos adicionales para el nombre del tomador
+    tomador_nombre = fields.Char(
+        related='tomador_id.name',
+        string='Nombre del Tomador',
+        readonly=True
+    )
+    
+    # Campo para el año del vehículo
+    ano = fields.Integer(
+        related='vehiculo_id.ano',
+        string='Año del Vehículo',
+        readonly=True
+    )
+    
+    # Campo para el serial del motor
+    serial_motor = fields.Char(
+        related='vehiculo_id.serial_motor',
+        string='Serial del Motor',
+        readonly=True
+    )
+    
+    # Campo para el tipo de vehículo
+    tipo = fields.Char(
+        related='vehiculo_id.tipo',
+        string='Tipo de Vehículo',
+        readonly=True
+    )
+    
+    # Campo para el uso del vehículo
+    uso = fields.Char(
+        related='vehiculo_id.uso',
+        string='Uso del Vehículo',
+        readonly=True
+    )
+    
+    # Campo para el combustible
+    combustible = fields.Char(
+        related='vehiculo_id.combustible',
+        string='Combustible',
+        readonly=True
+    )
+    
+    # Campo para la transmisión
+    transmision = fields.Char(
+        related='vehiculo_id.transmision',
+        string='Transmisión',
+        readonly=True
+    )
+    
+    # Campo para el valor comercial
+    valor_comercial = fields.Float(
+        related='vehiculo_id.valor_comercial',
+        string='Valor Comercial',
+        readonly=True
+    )
 
     @api.onchange('vigencia_desde')
     def _onchange_vigencia_desde(self):
@@ -222,3 +282,110 @@ class PolizaSeguro(models.Model):
             name = f"{record.numero_poliza} - {record.asegurado_id.name}"
             result.append((record.id, name))
         return result
+
+    def action_print_custom_pdf(self):
+        """Genera PDF usando plantilla personalizada"""
+        try:
+            # Buscar plantilla por defecto
+            template = self.env['pdf.template'].search([('is_default', '=', True)], limit=1)
+            if not template:
+                template = self.env['pdf.template'].search([], limit=1)
+            
+            if not template:
+                raise models.UserError("No hay plantillas PDF configuradas. Por favor, configure una plantilla primero.")
+            
+            # Preparar datos para rellenar el PDF
+            poliza_data = self._prepare_pdf_data()
+            
+            # Generar PDF
+            pdf_content = template.fill_pdf_template(poliza_data)
+            
+            # Crear attachment
+            filename = f"Poliza_{self.numero_poliza}.pdf"
+            attachment = self.env['ir.attachment'].create({
+                'name': filename,
+                'type': 'binary',
+                'datas': base64.b64encode(pdf_content),
+                'res_model': self._name,
+                'res_id': self.id,
+                'mimetype': 'application/pdf'
+            })
+            
+            # Retornar acción para descargar
+            return {
+                'type': 'ir.actions.act_url',
+                'url': f'/web/content/{attachment.id}?download=true',
+                'target': 'new',
+            }
+            
+        except Exception as e:
+            _logger.error(f"Error al generar PDF personalizado: {str(e)}")
+            raise models.UserError(f"Error al generar PDF: {str(e)}")
+
+    def _prepare_pdf_data(self):
+        """Prepara los datos de la póliza para rellenar el PDF"""
+        # Formatear fechas
+        vigencia_desde_str = self.vigencia_desde.strftime('%d/%m/%Y') if self.vigencia_desde else ''
+        vigencia_hasta_str = self.vigencia_hasta.strftime('%d/%m/%Y') if self.vigencia_hasta else ''
+        recibo_vigencia_desde_str = self.recibo_vigencia_desde.strftime('%d/%m/%Y') if self.recibo_vigencia_desde else ''
+        recibo_vigencia_hasta_str = self.recibo_vigencia_hasta.strftime('%d/%m/%Y') if self.recibo_vigencia_hasta else ''
+        
+        return {
+            # Datos básicos de la póliza
+            'numero_poliza': self.numero_poliza or '',
+            'vigencia_desde': vigencia_desde_str,
+            'vigencia_hasta': vigencia_hasta_str,
+            'hora_vigencia': self.hora_vigencia or '',
+            'tipo_pago': dict(self._fields['tipo_pago'].selection).get(self.tipo_pago, '') if self.tipo_pago else '',
+            'sucursal': self.sucursal or '',
+            'canal_venta': dict(self._fields['canal_venta'].selection).get(self.canal_venta, '') if self.canal_venta else '',
+            'frecuencia_pago': dict(self._fields['frecuencia_pago'].selection).get(self.frecuencia_pago, '') if self.frecuencia_pago else '',
+            'codigo_intermediarios': self.codigo_intermediarios or '',
+            'participacion': str(self.participacion) if self.participacion else '',
+            'moneda': self.moneda or '',
+            'total_pagar': str(self.total_pagar) if self.total_pagar else '',
+            'producto': self.producto or '',
+            
+            # Datos del tomador
+            'tomador_nombre': self.tomador_nombre or '',
+            'tomador_cedula': self.tomador_cedula or '',
+            'direccion': self.direccion or '',
+            'telefono': self.telefono or '',
+            
+            # Datos del asegurado
+            'nombre_asegurador': self.nombre_asegurador or '',
+            'cedula_rif_asegurador': self.cedula_rif_asegurador or '',
+            'telefono_asegurador': self.telefono_asegurador or '',
+            
+            # Datos del vehículo
+            'marca_vehiculo': self.marca_vehiculo or '',
+            'modelo_vehiculo': self.modelo_vehiculo or '',
+            'puestos_vehiculo': str(self.puestos_vehiculo) if self.puestos_vehiculo else '',
+            'placa_vehiculo': self.placa_vehiculo or '',
+            'color_vehiculo': self.color_vehiculo or '',
+            'serial_carroceria': self.serial_carroceria or '',
+            'serial_motor': self.serial_motor or '',
+            'ano': str(self.ano) if self.ano else '',
+            'tipo': self.tipo or '',
+            'uso': self.uso or '',
+            'combustible': self.combustible or '',
+            'transmision': self.transmision or '',
+            'valor_comercial': str(self.valor_comercial) if self.valor_comercial else '',
+            
+            # Datos de cobertura
+            'exceso_limite': str(self.exceso_limite) if self.exceso_limite else '',
+            'muerte_invalidez': str(self.muerte_invalidez) if self.muerte_invalidez else '',
+            'danos_cosas': str(self.danos_cosas) if self.danos_cosas else '',
+            'defensa_penal': str(self.defensa_penal) if self.defensa_penal else '',
+            'gastos_medicos': str(self.gastos_medicos) if self.gastos_medicos else '',
+            'gastos_funerarios': str(self.gastos_funerarios) if self.gastos_funerarios else '',
+            
+            # Datos del recibo
+            'recibo_vigencia_desde': recibo_vigencia_desde_str,
+            'recibo_vigencia_hasta': recibo_vigencia_hasta_str,
+            'recibo_hora': self.recibo_hora or '',
+            'tipo_movimiento': dict(self._fields['tipo_movimiento'].selection).get(self.tipo_movimiento, '') if self.tipo_movimiento else '',
+            'recibo_sucursal': self.recibo_sucursal or '',
+            'recibo_canal_venta': self.recibo_canal_venta or '',
+            'recibo_frecuencia_pago': self.recibo_frecuencia_pago or '',
+        }
