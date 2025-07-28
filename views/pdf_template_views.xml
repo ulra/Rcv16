@@ -67,7 +67,7 @@
     <record id="view_poliza_form_inherit_pdf" model="ir.ui.view">
         <field name="name">poliza.form.inherit.pdf</field>
         <field name="model">poliza.seguro</field>
-        <field name="inherit_id" ref="view_poliza_form"/>
+        <field name="inherit_id" ref="view_poliza_seguro_form"/>
         <field name="arch" type="xml">
             <xpath expr="//header" position="inside">
                 <button name="action_print_custom_pdf" 
