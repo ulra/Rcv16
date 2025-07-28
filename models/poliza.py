@@ -375,7 +375,6 @@ class PolizaSeguro(models.Model):
             'danos_cosas': str(self.danos_cosas) if self.danos_cosas else '',
             'exceso_limite': str(self.exceso_limite) if self.exceso_limite else '',
             'defensa_penal': str(self.defensa_penal) if self.defensa_penal else '',
-            'muerte_invalidez': str(self.muerte_invalidez) if self.muerte_invalidez else '',
             'gastos_medicos': str(self.gastos_medicos) if self.gastos_medicos else '',
             'gastos_funerarios': str(self.gastos_funerarios) if self.gastos_funerarios else '',
             'telefono': self.telefono or '',
