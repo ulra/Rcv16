@@ -398,3 +398,46 @@ class PolizaSeguro(models.Model):
             'recibo_canal_venta': self.recibo_canal_venta or '',
             'recibo_frecuencia_pago': self.recibo_frecuencia_pago or '',
         }
+    
+    def debug_pdf_data(self):
+        """
+        Método para debuggear los datos que se envían al PDF
+        """
+        poliza_data = self._prepare_pdf_data()
+        
+        message = f"DATOS DE LA PÓLIZA {self.numero_poliza}\n\n"
+        message += f"Total de campos: {len(poliza_data)}\n\n"
+        
+        # Agrupar por categorías
+        categories = {
+            'Datos básicos': ['numero_poliza', 'vigencia_desde', 'vigencia_hasta', 'hora_vigencia', 'tipo_pago', 'sucursal', 'canal_venta', 'frecuencia_pago', 'codigo_intermediarios', 'participacion', 'moneda', 'total_pagar', 'producto'],
+            'Tomador': ['tomador_nombre', 'tomador_cedula', 'direccion', 'telefono'],
+            'Asegurado': ['nombre_asegurador', 'cedula_rif_asegurador', 'telefono_asegurador'],
+            'Vehículo': ['marca_vehiculo', 'modelo_vehiculo', 'puestos_vehiculo', 'placa_vehiculo', 'color_vehiculo', 'serial_carroceria', 'serial_motor', 'ano', 'tipo', 'uso', 'combustible', 'transmision', 'valor_comercial'],
+            'Cobertura': ['exceso_limite', 'muerte_invalidez', 'danos_cosas', 'defensa_penal', 'gastos_medicos', 'gastos_funerarios'],
+            'Recibo': ['recibo_vigencia_desde', 'recibo_vigencia_hasta', 'recibo_hora', 'tipo_movimiento', 'recibo_sucursal', 'recibo_canal_venta', 'recibo_frecuencia_pago']
+        }
+        
+        for category, fields in categories.items():
+            message += f"📋 {category.upper()}:\n"
+            for field in fields:
+                if field in poliza_data:
+                    value = poliza_data[field]
+                    if value:
+                        message += f"  ✅ {field}: '{value}'\n"
+                    else:
+                        message += f"  ⚪ {field}: (vacío)\n"
+                else:
+                    message += f"  ❌ {field}: (no encontrado)\n"
+            message += "\n"
+        
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': f'Datos de Póliza {self.numero_poliza}',
+                'message': message,
+                'type': 'info',
+                'sticky': True,
+            }
+        }

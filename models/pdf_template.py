@@ -33,8 +33,6 @@ import traceback
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 
-_logger = logging.getLogger(__name__)
-
 
 class PdfTemplate(models.Model):
     _name = 'pdf.template'
@@ -124,17 +122,95 @@ class PdfTemplate(models.Model):
         """
         Método para debuggear los campos del PDF desde la interfaz
         """
+        if not self.template_file:
+            raise UserError("No hay archivo de plantilla cargado")
+        
         fields = self.get_pdf_fields()
-        if fields:
-            message = f"Campos encontrados en el PDF ({len(fields)}): {', '.join(fields)}"
+        
+        if not fields:
+            message = "No se encontraron campos de formulario en este PDF.\n\nEsto puede significar que:\n- El PDF no tiene campos rellenables\n- Los campos están protegidos\n- El PDF está dañado"
         else:
-            message = "No se encontraron campos de formulario en el PDF o el PDF no tiene campos rellenables."
+            message = f"Campos encontrados en el PDF ({len(fields)}):\n\n"
+            for i, field in enumerate(fields, 1):
+                message += f"{i}. {field}\n"
         
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
                 'title': 'Campos del PDF',
+                'message': message,
+                'type': 'info',
+                'sticky': True,
+            }
+        }
+    
+    def test_pdf_mapping(self):
+        """
+        Método de prueba para verificar el mapeo entre datos y campos PDF
+        """
+        if not self.template_file:
+            raise UserError("No hay archivo de plantilla cargado")
+        
+        # Obtener campos del PDF
+        pdf_fields = self.get_pdf_fields()
+        
+        # Simular datos de póliza típicos
+        sample_data = {
+            'numero_poliza': '12345',
+            'fecha_inicio': '2024-01-01',
+            'fecha_fin': '2024-12-31',
+            'tomador_nombre': 'Juan Pérez',
+            'tomador_cedula': '12345678',
+            'vehiculo_placa': 'ABC123',
+            'vehiculo_marca': 'Toyota',
+            'vehiculo_modelo': 'Corolla',
+            'vehiculo_año': '2020',
+            'suma_asegurada': '50000.00',
+            'prima_total': '1500.00'
+        }
+        
+        # Analizar coincidencias
+        matching_fields = []
+        missing_in_pdf = []
+        unused_pdf_fields = list(pdf_fields)
+        
+        for data_field in sample_data.keys():
+            if data_field in pdf_fields:
+                matching_fields.append(data_field)
+                if data_field in unused_pdf_fields:
+                    unused_pdf_fields.remove(data_field)
+            else:
+                missing_in_pdf.append(data_field)
+        
+        # Crear mensaje de diagnóstico
+        message = f"DIAGNÓSTICO DE MAPEO PDF\n\n"
+        message += f"📋 Campos en PDF: {len(pdf_fields)}\n"
+        message += f"📊 Datos de muestra: {len(sample_data)}\n"
+        message += f"✅ Coincidencias: {len(matching_fields)}\n\n"
+        
+        if matching_fields:
+            message += f"CAMPOS QUE COINCIDEN ({len(matching_fields)}):\n"
+            for field in matching_fields:
+                message += f"• {field}\n"
+            message += "\n"
+        
+        if missing_in_pdf:
+            message += f"DATOS SIN CAMPO EN PDF ({len(missing_in_pdf)}):\n"
+            for field in missing_in_pdf:
+                message += f"• {field}\n"
+            message += "\n"
+        
+        if unused_pdf_fields:
+            message += f"CAMPOS PDF SIN DATOS ({len(unused_pdf_fields)}):\n"
+            for field in unused_pdf_fields:
+                message += f"• {field}\n"
+        
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Diagnóstico de Mapeo PDF',
                 'message': message,
                 'type': 'info',
                 'sticky': True,

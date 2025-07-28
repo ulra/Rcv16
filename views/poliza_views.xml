@@ -32,6 +32,7 @@
                                 class="btn-primary" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
                         <button name="action_cancel" string="Cancelar" type="object" 
                                 class="btn-secondary" attrs="{'invisible': [('state', 'in', ['cancelled', 'expired'])]}"/>
+                        <button name="debug_pdf_data" type="object" string="Ver Datos PDF" class="btn-secondary"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,active,expired"/>
                     </header>
                     <sheet>

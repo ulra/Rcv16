@@ -21,7 +21,8 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="debug_pdf_fields" string="Ver Campos del PDF" type="object" class="btn-primary" attrs="{'invisible': [('template_file', '=', False)]}"/>
+                    <button name="debug_pdf_fields" type="object" string="Ver Campos del PDF" class="btn-primary" attrs="{'invisible': [('template_file', '=', False)]}"/>
+                    <button name="test_pdf_mapping" type="object" string="Probar Mapeo PDF" class="btn-secondary" attrs="{'invisible': [('template_file', '=', False)]}"/>
                 </header>
                 <sheet>
                     <group>
