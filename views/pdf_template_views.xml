@@ -20,6 +20,9 @@
         <field name="model">pdf.template</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button name="debug_pdf_fields" string="Ver Campos del PDF" type="object" class="btn-primary" attrs="{'invisible': [('template_file', '=', False)]}"/>
+                </header>
                 <sheet>
                     <group>
                         <group>
