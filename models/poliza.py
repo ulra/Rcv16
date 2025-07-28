@@ -332,7 +332,7 @@ class PolizaSeguro(models.Model):
             raise models.UserError(f"Error al generar PDF: {str(e)}")
 
     def _prepare_pdf_data(self):
-        """Prepara los datos de la póliza para rellenar el PDF"""
+        """Prepara los datos de la póliza para rellenar el PDF usando los nombres exactos de los campos del PDF"""
         # Formatear fechas
         vigencia_desde_str = self.vigencia_desde.strftime('%d/%m/%Y') if self.vigencia_desde else ''
         vigencia_hasta_str = self.vigencia_hasta.strftime('%d/%m/%Y') if self.vigencia_hasta else ''
@@ -340,63 +340,46 @@ class PolizaSeguro(models.Model):
         recibo_vigencia_hasta_str = self.recibo_vigencia_hasta.strftime('%d/%m/%Y') if self.recibo_vigencia_hasta else ''
         
         return {
-            # Datos básicos de la póliza
+            # Campos que coinciden exactamente con el PDF (39 campos disponibles)
             'numero_poliza': self.numero_poliza or '',
+            'tomador_nombre': self.tomador_nombre or '',
+            'tomador_cedula': self.tomador_cedula or '',
+            'recibo_vigencia_desde': recibo_vigencia_desde_str,
+            'nombre_asegurador': self.nombre_asegurador or '',
+            'direccion': self.direccion or '',
+            'cedula_rif_asegurador': self.cedula_rif_asegurador or '',
+            'telefono_asegurador': self.telefono_asegurador or '',
             'vigencia_desde': vigencia_desde_str,
             'vigencia_hasta': vigencia_hasta_str,
             'hora_vigencia': self.hora_vigencia or '',
-            'tipo_pago': dict(self._fields['tipo_pago'].selection).get(self.tipo_pago, '') if self.tipo_pago else '',
             'sucursal': self.sucursal or '',
             'canal_venta': dict(self._fields['canal_venta'].selection).get(self.canal_venta, '') if self.canal_venta else '',
-            'frecuencia_pago': dict(self._fields['frecuencia_pago'].selection).get(self.frecuencia_pago, '') if self.frecuencia_pago else '',
+            'tipo_pago': dict(self._fields['tipo_pago'].selection).get(self.tipo_pago, '') if self.tipo_pago else '',
+            'moneda': self.moneda or '',
             'codigo_intermediarios': self.codigo_intermediarios or '',
             'participacion': str(self.participacion) if self.participacion else '',
-            'moneda': self.moneda or '',
+            'frecuencia_pago': dict(self._fields['frecuencia_pago'].selection).get(self.frecuencia_pago, '') if self.frecuencia_pago else '',
             'total_pagar': str(self.total_pagar) if self.total_pagar else '',
-            'producto': self.producto or '',
-            
-            # Datos del tomador
-            'tomador_nombre': self.tomador_nombre or '',
-            'tomador_cedula': self.tomador_cedula or '',
-            'direccion': self.direccion or '',
-            'telefono': self.telefono or '',
-            
-            # Datos del asegurado
-            'nombre_asegurador': self.nombre_asegurador or '',
-            'cedula_rif_asegurador': self.cedula_rif_asegurador or '',
-            'telefono_asegurador': self.telefono_asegurador or '',
-            
-            # Datos del vehículo
             'marca_vehiculo': self.marca_vehiculo or '',
-            'modelo_vehiculo': self.modelo_vehiculo or '',
-            'puestos_vehiculo': str(self.puestos_vehiculo) if self.puestos_vehiculo else '',
+            'transmision': self.transmision or '',
             'placa_vehiculo': self.placa_vehiculo or '',
             'color_vehiculo': self.color_vehiculo or '',
-            'serial_carroceria': self.serial_carroceria or '',
-            'serial_motor': self.serial_motor or '',
+            'modelo_vehiculo': self.modelo_vehiculo or '',
             'ano': str(self.ano) if self.ano else '',
+            'serial_motor': self.serial_motor or '',
+            'serial_carroceria': self.serial_carroceria or '',
+            'puestos_vehiculo': str(self.puestos_vehiculo) if self.puestos_vehiculo else '',
             'tipo': self.tipo or '',
             'uso': self.uso or '',
-            'combustible': self.combustible or '',
-            'transmision': self.transmision or '',
-            'valor_comercial': str(self.valor_comercial) if self.valor_comercial else '',
-            
-            # Datos de cobertura
-            'exceso_limite': str(self.exceso_limite) if self.exceso_limite else '',
-            'muerte_invalidez': str(self.muerte_invalidez) if self.muerte_invalidez else '',
+            'danos_personas': str(self.muerte_invalidez) if self.muerte_invalidez else '',
             'danos_cosas': str(self.danos_cosas) if self.danos_cosas else '',
+            'exceso_limite': str(self.exceso_limite) if self.exceso_limite else '',
             'defensa_penal': str(self.defensa_penal) if self.defensa_penal else '',
+            'muerte_invalidez': str(self.muerte_invalidez) if self.muerte_invalidez else '',
             'gastos_medicos': str(self.gastos_medicos) if self.gastos_medicos else '',
             'gastos_funerarios': str(self.gastos_funerarios) if self.gastos_funerarios else '',
-            
-            # Datos del recibo
-            'recibo_vigencia_desde': recibo_vigencia_desde_str,
-            'recibo_vigencia_hasta': recibo_vigencia_hasta_str,
-            'recibo_hora': self.recibo_hora or '',
-            'tipo_movimiento': dict(self._fields['tipo_movimiento'].selection).get(self.tipo_movimiento, '') if self.tipo_movimiento else '',
-            'recibo_sucursal': self.recibo_sucursal or '',
-            'recibo_canal_venta': self.recibo_canal_venta or '',
-            'recibo_frecuencia_pago': self.recibo_frecuencia_pago or '',
+            'telefono': self.telefono or '',
+            'producto': self.producto or '',
         }
     
     def debug_pdf_data(self):

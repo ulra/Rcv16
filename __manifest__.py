@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'La Venezolana de Seguros y Vida',
-    'version': '16.0.2.25.0',
+    'version': '16.0.2.27.0',
     'category': 'Insurance',
     'summary': 'Gestión de Pólizas de Seguros Vehiculares',
     'description': """
