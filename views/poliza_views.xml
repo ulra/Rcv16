@@ -50,7 +50,7 @@
                                         <field name="tomador_cedula" readonly="1"/>
                                     </group>
                                     <group string="Datos del Asegurado">
-                                        <field name="asegurado_id" options="{'no_create': False, 'no_open': False}"/>
+                                        <field name="asegurado_id" domain="[('es_asegurado', '=', True)]" options="{'no_create': False, 'no_open': False}"/>
                                         <field name="asegurado_cedula" readonly="1"/>
                                     </group>
                                 </group>

@@ -48,7 +48,8 @@ class PolizaSeguro(models.Model):
         'poliza.tomador',
         string='Asegurado',
         required=True,
-        tracking=True
+        tracking=True,
+        domain=[('es_asegurado', '=', True)]
     )
     asegurado_cedula = fields.Char(
         related='asegurado_id.cedula_rif',
@@ -117,7 +118,15 @@ class PolizaSeguro(models.Model):
     total_pagar = fields.Float(string='Total a Pagar', digits=(12, 2), required=True)
 
     # PLANES DE ASOCIADOS
-    producto = fields.Char(string='Producto', required=True)
+    producto = fields.Selection([
+        ('rcv', 'RCV (Responsabilidad Civil Vehicular)'),
+        ('integral', 'Seguro Integral'),
+        ('terceros', 'Seguro contra Terceros'),
+        ('colision', 'Seguro de Colisión'),
+        ('robo', 'Seguro contra Robo'),
+        ('incendio', 'Seguro contra Incendio'),
+        ('otros', 'Otros')
+    ], string='Producto', required=True, default='rcv')
 
     # DATOS DEL VEHÍCULO
     vehiculo_id = fields.Many2one(
