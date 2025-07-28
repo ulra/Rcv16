@@ -4,7 +4,11 @@ from odoo import models, fields, api
 import base64
 import io
 import logging
-from PyPDF2 import PdfReader, PdfWriter
+try:
+    from PyPDF2 import PdfReader, PdfWriter
+except ImportError:
+    # Fallback para versiones antiguas de PyPDF2
+    from PyPDF2 import PdfFileReader as PdfReader, PdfFileWriter as PdfWriter
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 
@@ -72,18 +76,36 @@ class PdfTemplate(models.Model):
             writer = PdfWriter()
             
             # Procesar cada página
-            for page_num in range(len(reader.pages)):
-                page = reader.pages[page_num]
-                
-                # Si la página tiene campos de formulario, rellenarlos
-                if '/Annots' in page:
-                    # Actualizar los campos del formulario
-                    writer.update_page_form_field_values(
-                        writer.add_page(page), 
-                        poliza_data
-                    )
-                else:
-                    writer.add_page(page)
+            try:
+                # API nueva (PyPDF2 >= 2.0)
+                num_pages = len(reader.pages)
+                for page_num in range(num_pages):
+                    page = reader.pages[page_num]
+                    
+                    # Si la página tiene campos de formulario, rellenarlos
+                    if hasattr(writer, 'update_page_form_field_values') and '/Annots' in page:
+                        writer.update_page_form_field_values(
+                            writer.add_page(page), 
+                            poliza_data
+                        )
+                    else:
+                        writer.add_page(page)
+            except AttributeError:
+                # API antigua (PyPDF2 < 2.0)
+                num_pages = reader.getNumPages()
+                for page_num in range(num_pages):
+                    page = reader.getPage(page_num)
+                    
+                    # Para versiones antiguas, intentar rellenar campos
+                    if hasattr(reader, 'getFields') and reader.getFields():
+                        for field_name, field_value in poliza_data.items():
+                            if field_name in reader.getFields():
+                                try:
+                                    page.update({field_name: field_value})
+                                except:
+                                    pass
+                    
+                    writer.addPage(page)
             
             # Generar el PDF resultante
             output = io.BytesIO()
