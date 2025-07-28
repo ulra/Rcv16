@@ -6,6 +6,8 @@ import base64
 import io
 import logging
 
+_logger = logging.getLogger(__name__)
+
 # Intentar importar librerías de PDF en orden de preferencia
 try:
     import pypdf
