@@ -6,19 +6,26 @@ import base64
 import io
 import logging
 
+# Intentar importar librerías de PDF en orden de preferencia
 try:
-    # Intentar con pypdf (versión más nueva y estable)
+    import pypdf
     from pypdf import PdfReader, PdfWriter
-    _logger.info("Usando pypdf")
+    PDF_LIBRARY = 'pypdf'
+    _logger.info("Usando pypdf para procesamiento de PDF")
 except ImportError:
     try:
-        # Fallback a PyPDF2 versión nueva
-        from PyPDF2 import PdfReader, PdfWriter
-        _logger.info("Usando PyPDF2 nueva")
-    except ImportError:
-        # Fallback para versiones muy antiguas de PyPDF2
+        import PyPDF2
         from PyPDF2 import PdfFileReader as PdfReader, PdfFileWriter as PdfWriter
-        _logger.info("Usando PyPDF2 antigua")
+        PDF_LIBRARY = 'PyPDF2_old'
+        _logger.info("Usando PyPDF2 (versión antigua) para procesamiento de PDF")
+    except ImportError:
+        try:
+            from PyPDF2 import PdfReader, PdfWriter
+            PDF_LIBRARY = 'PyPDF2_new'
+            _logger.info("Usando PyPDF2 (versión nueva) para procesamiento de PDF")
+        except ImportError:
+            _logger.error("No se pudo importar ninguna librería de PDF")
+            PDF_LIBRARY = None
 
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
