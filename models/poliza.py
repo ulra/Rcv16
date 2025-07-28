@@ -207,28 +207,28 @@ class PolizaSeguro(models.Model):
     )
     
     # Campo para el tipo de vehículo
-    tipo = fields.Char(
+    tipo = fields.Selection(
         related='vehiculo_id.tipo',
         string='Tipo de Vehículo',
         readonly=True
     )
     
     # Campo para el uso del vehículo
-    uso = fields.Char(
+    uso = fields.Selection(
         related='vehiculo_id.uso',
         string='Uso del Vehículo',
         readonly=True
     )
     
     # Campo para el combustible
-    combustible = fields.Char(
+    combustible = fields.Selection(
         related='vehiculo_id.combustible',
         string='Combustible',
         readonly=True
     )
     
     # Campo para la transmisión
-    transmision = fields.Char(
+    transmision = fields.Selection(
         related='vehiculo_id.transmision',
         string='Transmisión',
         readonly=True
