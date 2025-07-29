@@ -233,15 +233,6 @@ class PdfTemplate(models.Model):
             matching_fields = [field for field in poliza_data.keys() if field in available_fields]
             _logger.info(f"Campos que coinciden ({len(matching_fields)}): {matching_fields}")
             
-            if not available_fields:
-                _logger.warning("No se encontraron campos de formulario en el PDF. El PDF podría no tener campos rellenables.")
-                return self._generate_simple_pdf(poliza_data)
-            
-            if not matching_fields:
-                _logger.warning("Ningún campo de datos coincide con los campos del PDF.")
-                _logger.info("Datos disponibles: " + ", ".join(poliza_data.keys()))
-                _logger.info("Campos PDF: " + ", ".join(available_fields))
-            
             pdf_data = base64.b64decode(self.template_file)
             pdf_input = io.BytesIO(pdf_data)
             reader = PdfReader(pdf_input)
@@ -252,12 +243,14 @@ class PdfTemplate(models.Model):
                 writer.add_page(page)
             
             fields_filled = 0
+            form_fillable = False
             
             # Intentar rellenar campos según la librería disponible
             if PDF_LIBRARY == 'pypdf':
                 # Usar pypdf (más moderno)
                 if hasattr(reader, 'get_fields') and reader.get_fields():
                     fields = reader.get_fields()
+                    form_fillable = True
                     
                     # Rellenar campos
                     for field_name, field_value in poliza_data.items():
@@ -268,6 +261,10 @@ class PdfTemplate(models.Model):
                                 fields_filled += 1
                             except Exception as e:
                                 _logger.warning(f"✗ Error al rellenar campo '{field_name}': {str(e)}")
+                                # Si hay error de AcroForm, cambiar a modo overlay
+                                if "AcroForm" in str(e):
+                                    form_fillable = False
+                                    break
                         else:
                             _logger.debug(f"- Campo '{field_name}' no existe en PDF")
                             
@@ -275,6 +272,7 @@ class PdfTemplate(models.Model):
                 # Usar PyPDF2
                 if hasattr(reader, 'getFields') and reader.getFields():
                     fields = reader.getFields()
+                    form_fillable = True
                     
                     # Rellenar campos
                     for field_name, field_value in poliza_data.items():
@@ -288,8 +286,17 @@ class PdfTemplate(models.Model):
                                 fields_filled += 1
                             except Exception as e:
                                 _logger.warning(f"✗ Error al rellenar campo '{field_name}': {str(e)}")
+                                # Si hay error de AcroForm, cambiar a modo overlay
+                                if "AcroForm" in str(e):
+                                    form_fillable = False
+                                    break
                         else:
                             _logger.debug(f"- Campo '{field_name}' no existe en PDF")
+            
+            # Si el PDF no es rellenable o hay errores de AcroForm, usar método overlay
+            if not form_fillable or fields_filled == 0:
+                _logger.warning("PDF no es rellenable o hay errores de AcroForm. Usando método overlay.")
+                return self._generate_overlay_pdf(poliza_data)
             
             _logger.info(f"Resumen: {fields_filled} campos rellenados de {len(matching_fields)} coincidencias")
             
@@ -304,52 +311,132 @@ class PdfTemplate(models.Model):
         except Exception as e:
             _logger.error(f"Error al rellenar PDF: {str(e)}")
             
-            # Fallback: generar PDF simple con reportlab
+            # Fallback: generar PDF con overlay
             try:
-                _logger.info("Intentando generar PDF simple como fallback")
-                return self._generate_simple_pdf(poliza_data)
+                _logger.info("Intentando generar PDF con overlay como fallback")
+                return self._generate_overlay_pdf(poliza_data)
             except Exception as fallback_error:
-                _logger.error(f"Error en fallback: {str(fallback_error)}")
-                # Último recurso: devolver plantilla original
-                _logger.warning("Devolviendo plantilla original sin modificar")
-                return base64.b64decode(self.template_file)
+                _logger.error(f"Error en fallback overlay: {str(fallback_error)}")
+                # Último recurso: generar PDF simple
+                try:
+                    _logger.info("Último recurso: generar PDF simple")
+                    return self._generate_simple_pdf(poliza_data)
+                except Exception as final_error:
+                    _logger.error(f"Error en último recurso: {str(final_error)}")
+                    # Devolver plantilla original
+                    _logger.warning("Devolviendo plantilla original sin modificar")
+                    return base64.b64decode(self.template_file)
     
-    def _generate_simple_pdf(self, poliza_data):
+    def _generate_overlay_pdf(self, poliza_data):
         """
-        Genera un PDF simple usando reportlab con los datos de la póliza
+        Genera un PDF superponiendo los datos sobre la plantilla existente
         """
         try:
             from reportlab.pdfgen import canvas
             from reportlab.lib.pagesizes import letter
+            import io
+            
+            # Crear overlay con los datos
+            overlay_buffer = io.BytesIO()
+            p = canvas.Canvas(overlay_buffer, pagesize=letter)
+            
+            # Configurar fuente
+            p.setFont("Helvetica", 10)
+            
+            # Posiciones aproximadas para los campos (ajustar según la plantilla)
+            field_positions = {
+                'numero_poliza': (150, 720),
+                'tomador_nombre': (150, 680),
+                'tomador_cedula': (400, 680),
+                'vigencia_desde': (150, 640),
+                'vigencia_hasta': (400, 640),
+                'marca_vehiculo': (150, 600),
+                'modelo_vehiculo': (300, 600),
+                'placa_vehiculo': (450, 600),
+                'ano': (150, 560),
+                'color_vehiculo': (250, 560),
+                'serial_motor': (150, 520),
+                'serial_carroceria': (350, 520),
+                'exceso_limite': (150, 480),
+                'danos_personas': (300, 480),
+                'danos_cosas': (450, 480),
+            }
+            
+            # Dibujar los datos en las posiciones
+            for field_name, field_value in poliza_data.items():
+                if field_value and field_name in field_positions:
+                    x, y = field_positions[field_name]
+                    p.drawString(x, y, str(field_value))
+                    _logger.info(f"✓ Campo '{field_name}' superpuesto en posición ({x}, {y}): '{field_value}'")
+            
+            p.save()
+            overlay_buffer.seek(0)
+            
+            # Combinar overlay con la plantilla original
+            template_data = base64.b64decode(self.template_file)
+            template_buffer = io.BytesIO(template_data)
+            
+            template_reader = PdfReader(template_buffer)
+            overlay_reader = PdfReader(overlay_buffer)
+            writer = PdfWriter()
+            
+            # Superponer en cada página
+            for i, page in enumerate(template_reader.pages):
+                if i < len(overlay_reader.pages):
+                    page.merge_page(overlay_reader.pages[i])
+                writer.add_page(page)
+            
+            # Generar PDF final
+            output = io.BytesIO()
+            writer.write(output)
+            output.seek(0)
+            
+            _logger.info("PDF con overlay generado exitosamente")
+            return output.getvalue()
+            
+        except ImportError:
+            _logger.error("reportlab no está disponible para generar PDF overlay")
+            return self._generate_simple_pdf(poliza_data)
+        except Exception as e:
+            _logger.error(f"Error generando PDF overlay: {str(e)}")
+            return self._generate_simple_pdf(poliza_data)
+    
+    def _generate_simple_pdf(self, poliza_data):
+        """
+        Genera un PDF simple con los datos usando reportlab como fallback
+        """
+        try:
+            from reportlab.pdfgen import canvas
+            from reportlab.lib.pagesizes import letter
+            import io
             
             buffer = io.BytesIO()
             p = canvas.Canvas(buffer, pagesize=letter)
-            width, height = letter
             
             # Título
             p.setFont("Helvetica-Bold", 16)
-            p.drawString(50, height - 50, "PÓLIZA DE SEGURO")
+            p.drawString(100, 750, "Póliza de Seguro")
             
-            # Datos de la póliza
-            y_position = height - 100
+            # Datos
+            y_position = 700
             p.setFont("Helvetica", 12)
             
             for key, value in poliza_data.items():
-                if y_position < 50:  # Nueva página si es necesario
-                    p.showPage()
-                    y_position = height - 50
-                
-                text = f"{key}: {value}"
-                p.drawString(50, y_position, text)
-                y_position -= 20
+                if value:  # Solo mostrar campos con valor
+                    p.drawString(100, y_position, f"{key}: {value}")
+                    y_position -= 20
+                    
+                    if y_position < 100:  # Nueva página si es necesario
+                        p.showPage()
+                        y_position = 750
             
             p.save()
             buffer.seek(0)
-            result = buffer.getvalue()
+            return buffer.getvalue()
             
-            _logger.info(f"PDF simple generado exitosamente, tamaño: {len(result)} bytes")
-            return result
-            
+        except ImportError:
+            _logger.error("reportlab no está disponible para generar PDF simple")
+            return base64.b64decode(self.template_file)
         except Exception as e:
-            _logger.error(f"Error al generar PDF simple: {str(e)}")
-            raise UserError(f"Error crítico al generar PDF: {str(e)}")
+            _logger.error(f"Error generando PDF simple: {str(e)}")
+            return base64.b64decode(self.template_file)
